@@ -1,5 +1,10 @@
 pipeline {
     agent any
+	environment {
+        
+        	DOCKER_IMAGE_NAME = 'anas5155/python-hello-docker-jenkins'
+        	IMAGE_TAG = '1.0'
+	}
     stages {
         stage('Checkout') {
             steps {
