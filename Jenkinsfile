@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Run Python Script') {
             steps {
-                sh 'python333 hello.py'
+                sh 'python3 hello.py'
             }
         }
         stage('Build Docker Image') {
