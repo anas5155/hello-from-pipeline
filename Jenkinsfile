@@ -37,7 +37,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh """
                                 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                                docker push ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}  // Pushing the correctly named image
+                                docker push anas5155/python-hello-docker-jenkins:1.0  // Pushing the correctly named image
                             """
                         }
                     } catch (Exception e) {
