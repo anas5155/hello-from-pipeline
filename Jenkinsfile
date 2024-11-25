@@ -3,24 +3,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub
-                git 'https://github.com/anas5155/hello-from-pipeline.git'
+                // Ensure you're checking out the correct branch
+                git branch: 'main', url: 'https://github.com/anas5155/hello-from-pipeline.git'
             }
         }
         stage('Run Python Script') {
             steps {
-                // Run the Python script (make sure 'python' is available on the agent)
-                sh 'python3 hello.py'
+                sh 'python hello.py'
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
                     try {
-                        docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
+                        docker.build("python-hello-cdac")
                     } catch (Exception e) {
-                        echo "Failed to build docker image: ${e.message}"
-                        error "Failed to build docker image"
+                        echo "Failed to build Docker image: ${e.message}"
+                        error "Failed to build Docker image"
                     }
                 }
             }
@@ -32,11 +31,11 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh """
                                 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                                docker push ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
+                                docker push python-hello-cdac
                             """
                         }
                     } catch (Exception e) {
-                        echo "Failed to push Docker Image to registry: ${e.message}"
+                        echo "Failed to push Docker Image: ${e.message}"
                         error "Failed to push Docker Image"
                     }
                 }
@@ -45,10 +44,10 @@ pipeline {
     }
     post {
         success {
-            echo 'Python script executed successfully.'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Python script execution failed.'
+            echo 'Pipeline failed.'
         }
     }
 }
