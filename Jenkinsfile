@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        docker.build("python-hello-cdac")
+                        docker.build("python-hello-docker-jenkins")
                     } catch (Exception e) {
                         echo "Failed to build Docker image: ${e.message}"
                         error "Failed to build Docker image"
