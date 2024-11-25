@@ -1,13 +1,12 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = 'anas5155/python-hello-docker-jenkins' // Correct image name
-        IMAGE_TAG = '1.0'  // Tag the image
+        DOCKER_IMAGE_NAME = 'anas5155/python-hello-docker-jenkins'
+        IMAGE_TAG = '1.0'
     }
     stages {
         stage('Checkout') {
             steps {
-                // Ensure you're checking out the correct branch
                 git branch: 'main', url: 'https://github.com/anas5155/hello-from-pipeline.git'
             }
         }
@@ -20,7 +19,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Build the docker image with correct image name and tag
                         docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
                     } catch (Exception e) {
                         echo "Failed to build Docker image: ${e.message}"
@@ -33,11 +31,14 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Use credentials securely from Jenkins Credentials store
+                        // Verify the image exists
+                        sh "docker images ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
+                        
                         withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            echo "Docker Image to Push: ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
                             sh """
                                 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                                docker push anas5155/python-hello-docker-jenkins:1.0  // Pushing the correctly named image
+                                docker push "${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
                             """
                         }
                     } catch (Exception e) {
